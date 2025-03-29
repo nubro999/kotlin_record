@@ -52,4 +52,4 @@ val String.correctSpellingNotePrompt: String
         Note content:
         $this
         Corrected note:
-    """.trimIndent()
+    """.trimIndent() //노트관련 ai 프롬프팅 툴
