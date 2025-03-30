@@ -6,7 +6,7 @@ import com.mhss.app.domain.systemMessage
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OpenaiMessageRequestBody(
+data class OpenaiMessageRequestBody( //요청본문
     val model: String,
     val messages: List<OpenaiMessage>
 )
@@ -25,12 +25,12 @@ fun List<AiMessage>.toOpenAiRequestBody(
         messages =
         listOf(
             OpenaiMessage(
-                content = systemMessage,
+                content = systemMessage, //항상 시스템메세지가 포함
                 role = NetworkConstants.OPENAI_MESSAGE_SYSTEM_TYPE
             )
         ) + map {
             OpenaiMessage(
-                content = it.content + it.attachmentsText,
+                content = it.content + it.attachmentsText, //ai응답과 사용자 응답을 구별
                 role = it.type.openaiRole
             )
         }

@@ -27,8 +27,13 @@ class OpenaiApi(
     private val client: HttpClient,
     @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : AiApi {
-    override suspend fun sendPrompt(baseUrl: String, prompt: String, model: String, key: String)
-            : NetworkResult<String> {
+    override suspend fun sendPrompt( //하나의 메세지 전달
+        baseUrl: String,
+        prompt: String, //하나의 string
+        model: String,
+        key: String
+    )
+    : NetworkResult<String> {
         return withContext(ioDispatcher) {
             val result = client.post(baseUrl) {
                 url {
@@ -48,7 +53,7 @@ class OpenaiApi(
 
                     )
                 )
-            }.body<OpenaiResponse>()
+            }.body<OpenaiResponse>() //OpenAI가 응답을 보내면 성공했는지 실패했는지에 따라 choices나 error 중 하나가 채워지는 거
             if (result.error != null) {
                 if (result.error.message.contains("API key")) {
                     NetworkResult.InvalidKey
@@ -61,9 +66,9 @@ class OpenaiApi(
         }
     }
 
-    override suspend fun sendMessage(
+    override suspend fun sendMessage( //메세지 히스토리 전달
         baseUrl: String,
-        messages: List<AiMessage>,
+        messages: List<AiMessage>, //여기서 리스트 전달
         model: String,
         key: String
     ): NetworkResult<AiMessage> {
