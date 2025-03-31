@@ -58,7 +58,7 @@ class AssistantViewModel(
 
 
     private val _messages = mutableStateListOf<AiMessage>()
-    val messages: List<AiMessage> = _messages
+    val messages: List<AiMessage> = _messages //List
     val attachments = mutableStateListOf<AiMessageAttachment>()
 
     var uiState by mutableStateOf(UiState())
@@ -84,7 +84,7 @@ class AssistantViewModel(
         }
     }
 
-    private val aiProvider =
+    private val aiProvider = //
         getPreference(intPreferencesKey(PrefsConstants.AI_PROVIDER_KEY), AiProvider.None.id)
             .map { id -> AiProvider.entries.first { it.id == id } }
             .onEach { provider ->
@@ -92,7 +92,7 @@ class AssistantViewModel(
                 when (provider) {
                     AiProvider.OpenAI -> {
                         aiKey = getPreference(
-                            stringPreferencesKey(PrefsConstants.OPENAI_KEY),
+                            stringPreferencesKey(PrefsConstants.OPENAI_KEY), //key가져오기
                             ""
                         ).first()
                         aiModel = getPreference(
@@ -208,6 +208,7 @@ class AssistantViewModel(
         }
     }
 
+    // TODO: diaryAttachmentText 
     private suspend fun getAttachmentText(attachments: List<AiMessageAttachment>): String {
         val builder = StringBuilder()
         if (attachments.isEmpty()) return ""

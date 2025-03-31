@@ -125,6 +125,7 @@ fun AiAttachmentsSection(
         ) { i ->
             when (val attachment = attachments[i]) {
                 is AiMessageAttachment.Note -> NoteAttachmentCard(attachment.note)
+                //TODO()is AiMessageAttachment.Diary -> NoteAttachmentCard(attachment.diary)
                 is AiMessageAttachment.Task -> TaskAttachmentCard(attachment.task)
                 is AiMessageAttachment.CalenderEvents -> CalendarEventsAttachmentCard()
             }
@@ -134,7 +135,7 @@ fun AiAttachmentsSection(
 }
 
 @Composable
-fun NoteAttachmentCard(
+fun NoteAttachmentCard( //NoteAttachmentCard는 노트 첨부 파일을 렌더링하는 하위 컴포넌트로, AiAttachmentsCard 내부에서 특정 첨부 파일 유형을 처리하기 위해 포함
     note: Note,
     modifier: Modifier = Modifier,
     showRemoveButton: Boolean = false,

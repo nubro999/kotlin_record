@@ -53,3 +53,5 @@ val String.correctSpellingNotePrompt: String
         $this
         Corrected note:
     """.trimIndent() //노트관련 ai 프롬프팅 툴
+
+// TODO:  val Diary.ExtractKeyword: String
