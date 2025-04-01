@@ -86,7 +86,7 @@ dependencies {
     implementation(project(":calendar:domain"))
     implementation(project(":diary:domain"))
 
-    implementation(project(":core:notification"))
+    implementation(project(":core:notification")) //core는 공통모듈
     implementation(project(":core:ui"))
     implementation(project(":core:di"))
     implementation(project(":core:alarm"))

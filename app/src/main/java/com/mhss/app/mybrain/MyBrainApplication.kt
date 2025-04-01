@@ -44,7 +44,7 @@ import kotlin.system.exitProcess
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PrefsConstants.SETTINGS_PREFERENCES)
 
-class MyBrainApplication : Application() {
+class MyBrainApplication : Application() { //여기서 다른 모듈 통합
 
     override fun onCreate() {
         super.onCreate()
@@ -62,7 +62,7 @@ class MyBrainApplication : Application() {
                 NotePresentationModule().module,
                 noteDataModule,
                 DiaryPresentationModule().module,
-                diaryDataModule,
+                diaryDataModule, // todo(): record func
                 TasksPresentationModule().module,
                 tasksDataModule,
                 SettingsPresentationModule().module,
@@ -72,8 +72,8 @@ class MyBrainApplication : Application() {
                 BookmarksPresentationModule().module,
                 bookmarksDataModule,
                 WidgetModule().module,
-                aiDataModule,
-                AiPresentationModule().module
+                aiDataModule, //data module에서 domain과 결합
+                AiPresentationModule().module //여기서 view
             )
             workManagerFactory()
         }
