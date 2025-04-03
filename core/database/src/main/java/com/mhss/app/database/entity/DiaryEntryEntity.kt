@@ -28,7 +28,7 @@ data class DiaryEntryEntity(
     val id: Int = 0
 )
 
-fun DiaryEntryEntity.toDiaryEntry() = DiaryEntry(
+fun DiaryEntryEntity.toDiaryEntry() = DiaryEntry( //이거 Dao랑 뭐가 다르지
     title = title,
     content = content,
     createdDate = createdDate,
@@ -37,7 +37,7 @@ fun DiaryEntryEntity.toDiaryEntry() = DiaryEntry(
     id = id
 )
 
-fun DiaryEntry.toDiaryEntryEntity() = DiaryEntryEntity(
+fun DiaryEntry.toDiaryEntryEntity() = DiaryEntryEntity( //what is diff from above?
     title = title,
     content = content,
     createdDate = createdDate,

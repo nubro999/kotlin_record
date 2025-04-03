@@ -3,7 +3,7 @@ package com.mhss.app.database.dao
 import androidx.room.*
 import com.mhss.app.database.entity.AlarmEntity
 
-@Dao
+@Dao //Database access object
 interface AlarmDao {
 
     @Query("SELECT * FROM alarms")
@@ -12,7 +12,7 @@ interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(alarm: AlarmEntity)
 
-    @Delete
+    @Delete //room
     suspend fun delete(alarm: AlarmEntity)
 
     @Query("DELETE FROM alarms WHERE id = :id")

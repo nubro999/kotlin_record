@@ -37,6 +37,8 @@ class NotesViewModel(
     private val updateFolder: UpdateNoteFolderUseCase,
     private val getFolderNotes: GetNotesByFolderUseCase,
     private val getNoteFolder: GetNoteFolderUseCase,
+    // TODO: private val addSTTNote: STTNoteUseCase,
+    //여기의 data는 어디에 쓰이지 구현은 presentation?
 ) : ViewModel() {
 
     var notesUiState by mutableStateOf((UiState()))

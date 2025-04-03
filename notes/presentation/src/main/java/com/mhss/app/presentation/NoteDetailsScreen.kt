@@ -199,9 +199,9 @@ fun NoteDetailsScreen(
                 ) {
                     item {
                         GradientIconButton(
-                            text = stringResource(id = R.string.summarize),
+                            text = stringResource(id = R.string.summarize), //core에 언어별로 저장해놓은 이유가? 그 언어에 맞게 해독?
                             iconPainter = painterResource(id = R.drawable.ic_summarize),
-                        ) { viewModel.onEvent(NoteDetailsEvent.Summarize(content)) }
+                        ) { viewModel.onEvent(NoteDetailsEvent.Summarize(content)) } //여기서 작동
                     }
                     item {
                         GradientIconButton(
@@ -289,7 +289,7 @@ fun NoteDetailsScreen(
             ) {
                 AiResultSheet(
                     loading = aiState.loading,
-                    result = aiState.result,
+                    result = aiState.result, //여기서 정의
                     error = aiState.error?.toUserMessage(),
                     onCopyClick = {
                         val clipboard =

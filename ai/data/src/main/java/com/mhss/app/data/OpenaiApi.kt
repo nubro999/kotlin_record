@@ -35,7 +35,7 @@ class OpenaiApi(
     )
     : NetworkResult<String> {
         return withContext(ioDispatcher) {
-            val result = client.post(baseUrl) {
+            val result = client.post(baseUrl) { //여기서 요청실행
                 url {
                     appendPathSegments("chat", "completions")
                 }

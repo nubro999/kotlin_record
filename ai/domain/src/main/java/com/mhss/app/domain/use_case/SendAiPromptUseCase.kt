@@ -9,7 +9,7 @@ import org.koin.core.annotation.Single
 import java.io.IOException
 
 @Single
-class SendAiPromptUseCase(
+class SendAiPromptUseCase( //단일맥락처리
     @Named("openaiApi") private val openai: AiApi,
     @Named("geminiApi") private val gemini: AiApi
 ) {
@@ -23,7 +23,7 @@ class SendAiPromptUseCase(
         if (key.isBlank()) return NetworkResult.InvalidKey
         return try {
             when (provider) {
-                AiProvider.OpenAI -> openai.sendPrompt(
+                AiProvider.OpenAI -> openai.sendPrompt( //sendPrompt는 함수
                     baseUrl = baseURL,
                     prompt = prompt,
                     model = model,

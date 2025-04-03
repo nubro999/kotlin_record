@@ -10,11 +10,11 @@ import org.koin.core.annotation.Single
 import java.io.IOException
 
 @Single
-class SendAiMessageUseCase(
+class SendAiMessageUseCase( //다중맥락처리
     @Named("openaiApi") private val openai: AiApi,
     @Named("geminiApi") private val gemini: AiApi
 ) {
-    suspend operator fun invoke(
+    suspend operator fun invoke( //연산자 오버로딩: 객체를 함수처럼 사용
         messages: List<AiMessage>,
         key: String,
         model: String,

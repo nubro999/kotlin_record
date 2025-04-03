@@ -49,6 +49,7 @@ class NoteDetailsViewModel(
     private val getAllFolders: GetAllNoteFoldersUseCase,
     private val getNoteFolder: GetNoteFolderUseCase,
     private val sendAiPrompt: SendAiPromptUseCase,
+    // TODO: private val addSTTNote: AddSTTNoteUseCase,
     @Named("applicationScope") private val applicationScope: CoroutineScope,
     id: Int,
     folderId: Int,
@@ -66,7 +67,7 @@ class NoteDetailsViewModel(
         private set
     private var aiActionJob: Job? = null
 
-    private val aiProvider =
+    private val aiProvider = //여기서 ai관련 설정정보를 수집
         getPreference(intPreferencesKey(PrefsConstants.AI_PROVIDER_KEY), AiProvider.None.id)
             .map { id -> AiProvider.entries.first { it.id == id } }
             .onEach { provider ->
@@ -163,6 +164,7 @@ class NoteDetailsViewModel(
                     is NoteDetailsEvent.Summarize -> event.content.summarizeNotePrompt
                     is NoteDetailsEvent.AutoFormat -> event.content.autoFormatNotePrompt
                     is NoteDetailsEvent.CorrectSpelling -> event.content.correctSpellingNotePrompt
+                    // TODO:  is NoteDetailsEvent.Questioning -> event.content.QuestioningNotePrompt
                 }
                 aiState = aiState.copy(
                     loading = true,
@@ -170,13 +172,13 @@ class NoteDetailsViewModel(
                     result = null,
                     error = null
                 )
-                val result = sendAiPrompt(prompt)
+                val result = sendAiPrompt(prompt) //여기서 ai요청?
                 aiState = when (result) {
                     is NetworkResult.Success -> aiState.copy(
                         loading = false,
                         result = result.data,
                         error = null
-                    )
+                    ) //prompt, aistate, result
 
                     is NetworkResult.Failure -> aiState.copy(error = result, loading = false)
                 }
@@ -190,7 +192,7 @@ class NoteDetailsViewModel(
         }
     }
 
-    private suspend fun sendAiPrompt(prompt: String) = sendAiPrompt(
+    private suspend fun sendAiPrompt(prompt: String) = sendAiPrompt( //여기서 onEvent에서 prompt를 받음
         prompt,
         aiKey,
         aiModel,

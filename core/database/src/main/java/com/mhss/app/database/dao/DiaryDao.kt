@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DiaryDao {
 
-    @Query("SELECT title, SUBSTR(content, 1, 200) AS content, created_date, updated_date, mood, id FROM diary")
+    @Query("SELECT title, SUBSTR(content, 1, 200) AS content, created_date, updated_date, mood, id FROM diary") //직접쓴 query를 getentry로 함축
     fun getAllEntries(): Flow<List<DiaryEntryEntity>>
 
     @Query("SELECT * FROM diary WHERE id = :id")
