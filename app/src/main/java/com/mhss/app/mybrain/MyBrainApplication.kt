@@ -15,6 +15,7 @@ import com.mhss.app.ui.R
 import com.mhss.app.data.bookmarksDataModule
 import com.mhss.app.data.calendarDataModule
 import com.mhss.app.data.di.aiDataModule
+import com.mhss.app.data.di.sttDataModule
 import com.mhss.app.data.diaryDataModule
 import com.mhss.app.data.noteDataModule
 import com.mhss.app.data.settingsDataModule
@@ -32,6 +33,7 @@ import com.mhss.app.presentation.di.CalendarPresentationModule
 import com.mhss.app.presentation.di.DiaryPresentationModule
 import com.mhss.app.presentation.di.NotePresentationModule
 import com.mhss.app.presentation.di.SettingsPresentationModule
+import com.mhss.app.presentation.di.SttPresentationModule
 import com.mhss.app.presentation.di.TasksPresentationModule
 import com.mhss.app.util.Constants
 import com.mhss.app.widget.di.WidgetModule
@@ -62,7 +64,7 @@ class MyBrainApplication : Application() { //여기서 다른 모듈 통합
                 NotePresentationModule().module,
                 noteDataModule,
                 DiaryPresentationModule().module,
-                diaryDataModule, // todo(): record func
+                diaryDataModule,
                 TasksPresentationModule().module,
                 tasksDataModule,
                 SettingsPresentationModule().module,
@@ -73,7 +75,9 @@ class MyBrainApplication : Application() { //여기서 다른 모듈 통합
                 bookmarksDataModule,
                 WidgetModule().module,
                 aiDataModule, //data module에서 domain과 결합
-                AiPresentationModule().module //여기서 view
+                AiPresentationModule().module,//여기서 view
+                sttDataModule,
+                SttPresentationModule().module
             )
             workManagerFactory()
         }

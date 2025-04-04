@@ -28,6 +28,7 @@ material = "1.12.0"
 ktor = "2.3.12"
 squircleShape = "2.0.0"
 markdownRenderer = "0.26.0"
+lifecycleViewmodelAndroid = "2.8.5"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -79,6 +80,7 @@ ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation",
 squircle-shape = { group = "io.github.stoyan-vuchev", name = "squircle-shape", version.ref = "squircleShape" }
 markdown-renderer = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdownRenderer" }
 markdown-coil2 = { module = "com.mikepenz:multiplatform-markdown-renderer-coil2", version.ref = "markdownRenderer" }
+androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
