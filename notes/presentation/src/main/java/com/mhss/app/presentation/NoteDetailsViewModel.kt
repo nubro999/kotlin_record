@@ -1,5 +1,6 @@
 package com.mhss.app.presentation
 
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import com.mhss.app.domain.autoFormatNotePrompt
 import com.mhss.app.domain.correctSpellingNotePrompt
 import com.mhss.app.domain.model.Note
 import com.mhss.app.domain.model.NoteFolder
+import com.mhss.app.domain.repository.SpeechRecognitionState
 import com.mhss.app.domain.summarizeNotePrompt
 import com.mhss.app.domain.use_case.AddNoteUseCase
 import com.mhss.app.domain.use_case.DeleteNoteUseCase
@@ -17,6 +19,8 @@ import com.mhss.app.domain.use_case.GetAllNoteFoldersUseCase
 import com.mhss.app.domain.use_case.GetNoteFolderUseCase
 import com.mhss.app.domain.use_case.GetNoteUseCase
 import com.mhss.app.domain.use_case.SendAiPromptUseCase
+import com.mhss.app.domain.use_case.StartSpeechRecognitionUseCase
+import com.mhss.app.domain.use_case.StopSpeechRecognitionUseCase
 import com.mhss.app.domain.use_case.UpdateNoteUseCase
 import com.mhss.app.network.NetworkResult
 import com.mhss.app.preferences.PrefsConstants
@@ -27,6 +31,7 @@ import com.mhss.app.preferences.domain.use_case.GetPreferenceUseCase
 import com.mhss.app.util.date.now
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +54,8 @@ class NoteDetailsViewModel(
     private val getAllFolders: GetAllNoteFoldersUseCase,
     private val getNoteFolder: GetNoteFolderUseCase,
     private val sendAiPrompt: SendAiPromptUseCase,
-    // TODO: private val addSTTNote: AddSTTNoteUseCase,
+    private val startSpeechRecognitionUseCase: StartSpeechRecognitionUseCase,
+    private val stopSpeechRecognitionUseCase: StopSpeechRecognitionUseCase,
     @Named("applicationScope") private val applicationScope: CoroutineScope,
     id: Int,
     folderId: Int,
@@ -66,6 +72,9 @@ class NoteDetailsViewModel(
     var aiState by mutableStateOf((AiState()))
         private set
     private var aiActionJob: Job? = null
+
+    var sttState by mutableStateOf(STTState())
+        private set
 
     private val aiProvider = //여기서 ai관련 설정정보를 수집
         getPreference(intPreferencesKey(PrefsConstants.AI_PROVIDER_KEY), AiProvider.None.id)
@@ -164,7 +173,6 @@ class NoteDetailsViewModel(
                     is NoteDetailsEvent.Summarize -> event.content.summarizeNotePrompt
                     is NoteDetailsEvent.AutoFormat -> event.content.autoFormatNotePrompt
                     is NoteDetailsEvent.CorrectSpelling -> event.content.correctSpellingNotePrompt
-                    // TODO:  is NoteDetailsEvent.Questioning -> event.content.QuestioningNotePrompt
                 }
                 aiState = aiState.copy(
                     loading = true,
@@ -188,6 +196,78 @@ class NoteDetailsViewModel(
                 aiActionJob?.cancel()
                 aiActionJob = null
                 aiState = aiState.copy(showAiSheet = false)
+            }
+
+            is NoteDetailsEvent.Speech -> viewModelScope.launch {
+                // 음성 인식 시작 전 상태 초기화
+                sttState = sttState.copy(
+                    isListening = true,
+                    recognizedText = "",
+                    error = null,
+                    showSttDialog = true
+                )
+
+                // 음성 인식 시작 (도메인 레이어의 SpeechRecognitionState 사용)
+                startSpeechRecognitionUseCase().collect { recognitionState ->
+                    when (recognitionState) {
+                        is SpeechRecognitionState.Listening -> {
+                            sttState = sttState.copy(isListening = true)
+                        }
+                        is SpeechRecognitionState.Processing -> {
+                            sttState = sttState.copy(recognizedText = recognitionState.partialText)
+                        }
+                        is SpeechRecognitionState.Success -> {
+                            // 음성 인식 결과를 현재 노트 컨텐츠에 추가
+                            val currentContent = event.content
+                            val recognizedText = recognitionState.text
+
+                            // 새로운 내용 생성 (끝에 인식된 텍스트 추가)
+                            val newContent = if (currentContent.isNotEmpty()) {
+                                "$currentContent $recognizedText"
+                            } else {
+                                recognizedText
+                            }
+
+                            // 상태 업데이트
+                            sttState = sttState.copy(
+                                isListening = false,
+                                recognizedText = recognizedText
+                            )
+
+                            // 노트 내용 업데이트
+                            val updatedNote = noteUiState.note?.copy(content = newContent)
+                                ?: Note(
+                                    title = "",
+                                    content = newContent,
+                                    folderId = noteUiState.folder?.id,
+                                    createdDate = now(),
+                                    updatedDate = now()
+                                )
+
+                            noteUiState = noteUiState.copy(note = updatedNote)
+                        }
+                        is SpeechRecognitionState.Error -> {
+                            sttState = sttState.copy(
+                                isListening = false,
+                                error = recognitionState.message
+                            )
+                        }
+                        is SpeechRecognitionState.Idle -> {
+                            // 인식 완료 후 idle 상태로 돌아온 경우
+                            if (sttState.error == null) {
+                                // 성공적인 인식 후 대화상자 닫기 전 잠시 대기
+                                delay(1500)
+                            }
+                            sttState = sttState.copy(showSttDialog = false)
+                        }
+                    }
+                }
+            }
+            NoteDetailsEvent.DismissSttDialog -> {
+                sttState = sttState.copy(showSttDialog = false)
+            }
+            NoteDetailsEvent.StopSpeech -> {
+                stopSpeechRecognitionUseCase()
             }
         }
     }
@@ -223,5 +303,12 @@ class NoteDetailsViewModel(
         val result: String? = null,
         val error: NetworkResult.Failure? = null,
         val showAiSheet: Boolean = false,
+    )
+
+    data class STTState(
+        val isListening: Boolean = false,
+        val recognizedText: String = "",
+        val error: String? = null,
+        val showSttDialog: Boolean = false
     )
 }

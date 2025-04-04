@@ -26,7 +26,6 @@ class SpeechToTextRepositoryImpl(
     private val _isListening = MutableStateFlow(false)
     override val isListening: Boolean get() = _isListening.value
 
-    @RequiresApi(Build.VERSION_CODES.FROYO)
     override fun startListening(language: String): Flow<SpeechRecognitionState> = callbackFlow {
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
             trySend(SpeechRecognitionState.Error("음성 인식을 사용할 수 없습니다"))
@@ -112,7 +111,6 @@ class SpeechToTextRepositoryImpl(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.FROYO)
     override fun stopListening() {
         _isListening.value = false
         speechRecognizer?.apply {

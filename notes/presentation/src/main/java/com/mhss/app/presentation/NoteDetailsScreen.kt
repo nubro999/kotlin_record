@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +52,7 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteDetailsScreen(
     navController: NavHostController,
@@ -108,6 +110,16 @@ fun NoteDetailsScreen(
                 )
             )
         }
+    }
+    val sttState = viewModel.sttState
+    if (sttState.showSttDialog) {
+        SpeechToTextDialog(
+            isListening = sttState.isListening,
+            recognizedText = sttState.recognizedText,
+            error = sttState.error,
+            onDismissRequest = { viewModel.onEvent(NoteDetailsEvent.DismissSttDialog) },
+            onStop = { viewModel.onEvent(NoteDetailsEvent.StopSpeech) }
+        )
     }
     Scaffold(
         topBar = {
@@ -214,6 +226,17 @@ fun NoteDetailsScreen(
                             text = stringResource(id = R.string.correct_spelling),
                             iconPainter = painterResource(id = R.drawable.ic_spelling),
                         ) { viewModel.onEvent(NoteDetailsEvent.CorrectSpelling(content)) }
+                    }
+                    item {
+                        IconButton(onClick = {
+                            viewModel.onEvent(NoteDetailsEvent.Speech(content))
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_mic),
+                                contentDescription = stringResource(R.string.speech_to_text),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -428,4 +451,82 @@ private fun String.words(): Int {
     }
 
     return count
+}
+
+@Composable
+fun SpeechToTextDialog(
+    isListening: Boolean,
+    recognizedText: String,
+    error: String?,
+    onDismissRequest: () -> Unit,
+    onStop: () -> Unit
+) {
+    AlertDialog(
+        shape = RoundedCornerShape(25.dp),
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(id = R.string.speech_to_text)) },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isListening) {
+                    // 인식 중 애니메이션
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(100.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 3.dp
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_mic),
+                            contentDescription = null,
+                            modifier = Modifier.size(50.dp),
+                            tint = Color.Red
+                        )
+                    }
+                    Text(
+                        text = stringResource(id = R.string.listening),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                // 인식된 텍스트 표시
+                AnimatedVisibility(recognizedText.isNotEmpty()) {
+                    Text(
+                        text = recognizedText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                // 에러 메시지 표시
+                AnimatedVisibility(error != null) {
+                    Text(
+                        text = error ?: "",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onStop,
+                shape = RoundedCornerShape(25.dp)
+            ) {
+                Text(
+                    text = if (isListening)
+                        stringResource(id = R.string.stop)
+                    else
+                        stringResource(id = R.string.close)
+                )
+            }
+        }
+    )
 }

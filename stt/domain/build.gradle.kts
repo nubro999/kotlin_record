@@ -14,5 +14,6 @@ dependencies {
 
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+    implementation(project(":diary:domain"))
     ksp(libs.koin.ksp.compiler)
 }

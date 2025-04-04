@@ -196,4 +196,8 @@
     <string name="assistant">المساعد الشخصي</string>
     <string name="calendar_events_next_7_days">احداث ال7 ايام القادمة</string>
     <string name="ai_not_enabled">ميزة الذكاء الاصطناعي غير مفعلة\nالرجاء تفعيلها من قائمة الإضافات في الاعدادات</string>
+    <string name="speech_to_text">speech to text</string>
+    <string name="listening">listening</string>
+    <string name="stop">stop</string>
+    <string name="close">close</string>
 </resources>

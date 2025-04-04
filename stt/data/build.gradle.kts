@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.annotations)
+    implementation(libs.androidx.runtime.android)
     ksp(libs.koin.ksp.compiler)
 
     // 코루틴

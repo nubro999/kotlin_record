@@ -10,8 +10,10 @@ sealed class NoteDetailsEvent {
     data class CorrectSpelling(val content: String): NoteDetailsEvent(), AiAction
     data object AiResultHandled: NoteDetailsEvent()
     data class ScreenOnStop(val currentNote: Note): NoteDetailsEvent()
-    // TODO:  data class Questioning(val content: String): NoteDetailsEvent(), AiAction
-    // TODO:  data class STTNote(val content: String): NoteDetailsEvent(), STTAction
+    data class Speech(val content: String): NoteDetailsEvent(), SpeechEvent
+    data object DismissSttDialog: NoteDetailsEvent(), SpeechEvent
+    data object StopSpeech: NoteDetailsEvent(), SpeechEvent
 }
 
 sealed interface AiAction
+sealed interface SpeechEvent
