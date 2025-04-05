@@ -11,7 +11,7 @@ import com.mhss.app.domain.autoFormatNotePrompt
 import com.mhss.app.domain.correctSpellingNotePrompt
 import com.mhss.app.domain.model.Note
 import com.mhss.app.domain.model.NoteFolder
-import com.mhss.app.domain.repository.SpeechRecognitionState
+import com.mhss.app.domain.model.SpeechRecognitionState
 import com.mhss.app.domain.summarizeNotePrompt
 import com.mhss.app.domain.use_case.AddNoteUseCase
 import com.mhss.app.domain.use_case.DeleteNoteUseCase

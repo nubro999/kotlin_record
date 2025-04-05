@@ -6,4 +6,4 @@ import org.koin.core.annotation.Module
 
 @Module
 @ComponentScan("com.mhss.app.presentation")
-class SttPresentationModule
+class SpeechPresentationModule
