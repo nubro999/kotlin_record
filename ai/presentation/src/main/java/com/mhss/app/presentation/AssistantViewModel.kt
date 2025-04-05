@@ -45,6 +45,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.android.annotation.KoinViewModel
 
+//여기서 실제 구현
 @KoinViewModel
 class AssistantViewModel(
     private val sendAiMessage: SendAiMessageUseCase,

@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":diary:presentation"))
     implementation(project(":settings:presentation"))
     implementation(project(":ai:presentation"))
+    implementation(project(":stt:presentation"))
 
     implementation(project(":notes:data"))
     implementation(project(":tasks:data"))
@@ -81,10 +82,12 @@ dependencies {
     implementation(project(":calendar:data"))
     implementation(project(":ai:data"))
     implementation(project(":settings:data"))
+    implementation(project(":stt:data"))
 
     implementation(project(":tasks:domain"))
     implementation(project(":calendar:domain"))
     implementation(project(":diary:domain"))
+    implementation(project(":stt:domain"))
 
     implementation(project(":core:notification")) //core는 공통모듈
     implementation(project(":core:ui"))
