@@ -54,6 +54,7 @@ class NoteDetailsViewModel(
     private val getAllFolders: GetAllNoteFoldersUseCase,
     private val getNoteFolder: GetNoteFolderUseCase,
     private val sendAiPrompt: SendAiPromptUseCase,
+    private val _recognizedTextFlow: MutableStateFlow<String> = MutableStateFlow(""),
     private val startSpeechRecognitionUseCase: StartSpeechRecognitionUseCase,
     private val stopSpeechRecognitionUseCase: StopSpeechRecognitionUseCase,
     @Named("applicationScope") private val applicationScope: CoroutineScope,
@@ -206,6 +207,8 @@ class NoteDetailsViewModel(
                     error = null,
                     showSttDialog = true
                 )
+                // 현재 노트 내용 저장 (나중에 참조용)
+                val initialContent = event.content
 
                 // 음성 인식 시작 (도메인 레이어의 SpeechRecognitionState 사용)
                 startSpeechRecognitionUseCase().collect { recognitionState ->
@@ -214,37 +217,21 @@ class NoteDetailsViewModel(
                             sttState = sttState.copy(isListening = true)
                         }
                         is SpeechRecognitionState.Processing -> {
+                            // 실시간 인식 텍스트 업데이트
                             sttState = sttState.copy(recognizedText = recognitionState.partialText)
+
+                            // 실시간으로 노트 내용도 업데이트
+                            updateNoteContentWithRecognizedText(initialContent, recognitionState.partialText)
                         }
                         is SpeechRecognitionState.Success -> {
-                            // 음성 인식 결과를 현재 노트 컨텐츠에 추가
-                            val currentContent = event.content
-                            val recognizedText = recognitionState.text
-
-                            // 새로운 내용 생성 (끝에 인식된 텍스트 추가)
-                            val newContent = if (currentContent.isNotEmpty()) {
-                                "$currentContent $recognizedText"
-                            } else {
-                                recognizedText
-                            }
+                            // 최종 인식 결과로 노트 내용 업데이트
+                            updateNoteContentWithRecognizedText(initialContent, recognitionState.text)
 
                             // 상태 업데이트
                             sttState = sttState.copy(
                                 isListening = false,
-                                recognizedText = recognizedText
+                                recognizedText = recognitionState.text
                             )
-
-                            // 노트 내용 업데이트
-                            val updatedNote = noteUiState.note?.copy(content = newContent)
-                                ?: Note(
-                                    title = "",
-                                    content = newContent,
-                                    folderId = noteUiState.folder?.id,
-                                    createdDate = now(),
-                                    updatedDate = now()
-                                )
-
-                            noteUiState = noteUiState.copy(note = updatedNote)
                         }
                         is SpeechRecognitionState.Error -> {
                             sttState = sttState.copy(
@@ -279,6 +266,31 @@ class NoteDetailsViewModel(
         aiProvider.value,
         openaiURL
     )
+
+    private fun updateNoteContentWithRecognizedText(initialContent: String, recognizedText: String) {
+        if (recognizedText.isEmpty()) return
+
+        // 새로운 내용 생성 (초기 내용 + 공백 + 인식된 텍스트)
+        val newContent = if (initialContent.isNotEmpty()) {
+            "$initialContent $recognizedText"
+        } else {
+            recognizedText
+        }
+
+        // 노트 업데이트
+        val updatedNote = noteUiState.note?.copy(content = newContent)
+            ?: Note(
+                title = "",
+                content = newContent,
+                folderId = noteUiState.folder?.id,
+                createdDate = now(),
+                updatedDate = now()
+            )
+
+        noteUiState = noteUiState.copy(note = updatedNote)
+    }
+
+        // 노트 업데이트
 
     private fun noteChanged(
         note: Note,

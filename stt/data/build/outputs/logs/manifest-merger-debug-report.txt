@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml:2:13-83
-INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml:2:13-83
+ADDED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml:2:13-83
+INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml:2:13-83
 	package
-		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml
+		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml
 	xmlns:android
-		ADDED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml:2:23-81
+		ADDED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml:2:23-81
 uses-sdk
-INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml reason: use-sdk injection requested
-INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml
-INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml
+INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml reason: use-sdk injection requested
+INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml
+INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml
 	android:targetSdkVersion
-		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml
+		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml
 	android:minSdkVersion
-		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest3853757210781235560.xml
+		INJECTED from C:\Coding\MyBrain\stt\data\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest16126640592183799999.xml

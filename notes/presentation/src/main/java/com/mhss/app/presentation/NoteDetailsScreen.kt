@@ -492,15 +492,21 @@ fun SpeechToTextDialog(
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                }
 
-                // 인식된 텍스트 표시
-                AnimatedVisibility(recognizedText.isNotEmpty()) {
+                    // 현재 인식 중인 텍스트 미리보기 표시
                     Text(
                         text = recognizedText,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
+                        color = Color.Gray,
                         modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.content),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -520,13 +526,9 @@ fun SpeechToTextDialog(
                 onClick = onStop,
                 shape = RoundedCornerShape(25.dp)
             ) {
-                Text(
-                    text = if (isListening)
-                        stringResource(id = R.string.stop)
-                    else
-                        stringResource(id = R.string.close)
-                )
+                Text(stringResource(id = R.string.stop))
             }
         }
     )
 }
+
