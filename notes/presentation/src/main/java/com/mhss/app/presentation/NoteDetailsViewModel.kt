@@ -1,6 +1,5 @@
 package com.mhss.app.presentation
 
-import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,7 +53,6 @@ class NoteDetailsViewModel(
     private val getAllFolders: GetAllNoteFoldersUseCase,
     private val getNoteFolder: GetNoteFolderUseCase,
     private val sendAiPrompt: SendAiPromptUseCase,
-    private val _recognizedTextFlow: MutableStateFlow<String> = MutableStateFlow(""),
     private val startSpeechRecognitionUseCase: StartSpeechRecognitionUseCase,
     private val stopSpeechRecognitionUseCase: StopSpeechRecognitionUseCase,
     @Named("applicationScope") private val applicationScope: CoroutineScope,
@@ -277,19 +275,7 @@ class NoteDetailsViewModel(
             recognizedText
         }
 
-        // 노트 업데이트
-        val updatedNote = noteUiState.note?.copy(content = newContent)
-            ?: Note(
-                title = "",
-                content = newContent,
-                folderId = noteUiState.folder?.id,
-                createdDate = now(),
-                updatedDate = now()
-            )
-
-        noteUiState = noteUiState.copy(note = updatedNote)
     }
-
         // 노트 업데이트
 
     private fun noteChanged(

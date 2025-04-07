@@ -467,7 +467,7 @@ fun SpeechToTextDialog(
         title = { Text(stringResource(id = R.string.speech_to_text)) },
         text = {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (isListening) {
