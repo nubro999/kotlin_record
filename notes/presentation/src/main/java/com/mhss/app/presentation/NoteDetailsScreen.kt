@@ -11,6 +11,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -50,6 +51,22 @@ import com.mikepenz.markdown.m3.markdownTypography
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+
+private fun String.words(): Int {
+    var count = 0
+    var inWord = false
+
+    forEach { char ->
+        if (char == ' ') {
+            inWord = false
+        } else if (!inWord) {
+            count++
+            inWord = true
+        }
+    }
+
+    return count
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -111,7 +128,6 @@ fun NoteDetailsScreen(
             )
         }
     }
-
     Scaffold(
         topBar = {
             MyBrainAppBar(
@@ -230,9 +246,7 @@ fun NoteDetailsScreen(
                         }
                     }
                 }
-            }
-
-            // 이하 기존 코드 유지
+            } // 이하 기존 코드 유지
             if (readingMode)
                 Markdown(
                     content = content,
@@ -281,9 +295,7 @@ fun NoteDetailsScreen(
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
                 )
             }
-        }
-
-        // AI 결과 시트 표시
+        } // AI 결과 시트 표시
         AnimatedVisibility(
             visible = showAiSheet,
             enter = slideInVertically(
@@ -327,8 +339,6 @@ fun NoteDetailsScreen(
                 )
             }
         }
-
-        // STT 결과 바텀 시트 표시 (AiResultSheet 패턴과 유사하게)
         AnimatedVisibility(
             visible = sttState.showSttDialog,
             enter = slideInVertically(
@@ -397,9 +407,7 @@ fun NoteDetailsScreen(
             )
         }
 
-        // 폴더 선택 다이얼로그 표시
-        if (openFolderDialog) {
-            AlertDialog(
+        if (openFolderDialog) AlertDialog(
                 onDismissRequest = { openFolderDialog = false },
                 confirmButton = {},
                 text = {
@@ -409,29 +417,66 @@ fun NoteDetailsScreen(
                     ) {
                         Text(stringResource(R.string.change_folder))
                         FlowRow {
-                            // 폴더 선택 옵션들 표시 (기존 코드 유지)
-                            // ...
+                            Row(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(25.dp))
+                                    .border(1.dp, Color.Gray, RoundedCornerShape(25.dp))
+                                    .clickable {
+                                        folder = null
+                                        openFolderDialog = false
+                                    }
+                                    .background(if (folder == null) MaterialTheme.colorScheme.onBackground else Color.Transparent),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.none),
+                                    modifier = Modifier.padding(8.dp),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = if (folder == null) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                            state.folders.forEach {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .clip(RoundedCornerShape(25.dp))
+                                        .border(1.dp, Color.Gray, RoundedCornerShape(25.dp))
+                                        .clickable {
+                                            folder = it
+                                            openFolderDialog = false
+                                        }
+                                        .background(if (folder?.id == it.id) MaterialTheme.colorScheme.onBackground else Color.Transparent),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.ic_folder),
+                                        stringResource(R.string.folders),
+                                        modifier = Modifier.padding(
+                                            start = 8.dp,
+                                            top = 8.dp,
+                                            bottom = 8.dp
+                                        ),
+                                        tint = if (folder?.id == it.id) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = it.name,
+                                        modifier = Modifier.padding(
+                                            end = 8.dp,
+                                            top = 8.dp,
+                                            bottom = 8.dp
+                                        ),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = if (folder?.id == it.id) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-            )
-        }
-    }
-}
-private fun String.words(): Int {
-    var count = 0
-    var inWord = false
-
-    forEach { char ->
-        if (char == ' ') {
-            inWord = false
-        } else if (!inWord) {
-            count++
-            inWord = true
+                })
         }
     }
 
-    return count
-}
-// SpeechToTextDialog 함수는 제거 (SttBottomSheet으로 대체)
+
 
