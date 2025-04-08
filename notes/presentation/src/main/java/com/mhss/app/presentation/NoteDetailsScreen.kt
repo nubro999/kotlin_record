@@ -367,7 +367,7 @@ fun NoteDetailsScreen(
                     recognizedText = sttState.recognizedText,
                     error = sttState.error,
                     onStopClick = {
-                        content = sttState.recognizedText + "\n" + content
+                        content = content+ "\n" + sttState.recognizedText
                         viewModel.onEvent(NoteDetailsEvent.StopSpeech) },
                 )
             }

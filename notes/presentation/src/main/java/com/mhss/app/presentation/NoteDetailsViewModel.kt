@@ -75,7 +75,6 @@ class NoteDetailsViewModel(
 
     var sttState by mutableStateOf(STTState())
         private set
-
     private val aiProvider = //여기서 ai관련 설정정보를 수집
         getPreference(intPreferencesKey(PrefsConstants.AI_PROVIDER_KEY), AiProvider.None.id)
             .map { id -> AiProvider.entries.first { it.id == id } }
@@ -207,9 +206,6 @@ class NoteDetailsViewModel(
                     showSttDialog = true
                 )
 
-                // 기존 내용과 Speech 이벤트의 content 파라미터 사용
-                val initialContent = event.content
-
                 // 음성 인식 시작
                 startSpeechRecognitionUseCase().collect { recognitionState ->
                     when (recognitionState) {
@@ -217,17 +213,11 @@ class NoteDetailsViewModel(
                             sttState = sttState.copy(isListening = true)
                         }
                         is SpeechRecognitionState.Processing -> {
-                            // 실시간 인식 텍스트 업데이트
+                            // 실시간 인식 텍스트를 상태에만 업데이트 (노트에는 저장하지 않음)
                             sttState = sttState.copy(recognizedText = recognitionState.partialText)
-
-                            // 실시간으로 노트 내용도 업데이트
-                            updateNoteContentWithRecognizedText(initialContent, recognitionState.partialText)
                         }
                         is SpeechRecognitionState.Success -> {
-                            // 최종 인식 결과로 노트 내용 업데이트
-                            updateNoteContentWithRecognizedText(initialContent, recognitionState.text)
-
-                            // 상태 업데이트
+                            // 최종 인식 결과도 상태에만 업데이트 (노트에는 저장하지 않음)
                             sttState = sttState.copy(
                                 isListening = false,
                                 recognizedText = recognitionState.text
@@ -240,9 +230,7 @@ class NoteDetailsViewModel(
                             )
                         }
                         is SpeechRecognitionState.Idle -> {
-                            // 인식 완료 후 idle 상태로 돌아온 경우
                             if (sttState.error == null) {
-                                // 성공적인 인식 후 대화상자 닫기 전 잠시 대기
                                 delay(1500)
                             }
                             sttState = sttState.copy(showSttDialog = false)
@@ -250,6 +238,7 @@ class NoteDetailsViewModel(
                     }
                 }
             }
+
 
             is NoteDetailsEvent.DismissSttDialog -> {
                 sttState = sttState.copy(showSttDialog = false)
@@ -262,7 +251,6 @@ class NoteDetailsViewModel(
             }
         }
     }
-
     private suspend fun sendAiPrompt(prompt: String) = sendAiPrompt( //여기서 onEvent에서 prompt를 받음
         prompt,
         aiKey,
@@ -270,45 +258,6 @@ class NoteDetailsViewModel(
         aiProvider.value,
         openaiURL
     )
-
-    private fun updateNoteContentWithRecognizedText(initialContent: String, recognizedText: String) {
-        if (recognizedText.isEmpty()) return
-
-        // 새로운 내용 생성 (초기 내용 + 공백 + 인식된 텍스트)
-        val newContent = if (initialContent.isNotEmpty()) {
-            "$initialContent $recognizedText"
-        } else {
-            recognizedText
-        }
-
-        // 노트 업데이트 코드 추가
-        val currentNote = noteUiState.note
-        if (currentNote != null) {
-            viewModelScope.launch {
-                val updatedNote = currentNote.copy(
-                    content = newContent,
-                    updatedDate = now()
-                )
-                updateNote(updatedNote)
-                noteUiState = noteUiState.copy(note = updatedNote)
-            }
-        } else {
-            // 새 노트인 경우 UI 상태만 업데이트하고 나중에 ScreenOnStop에서 저장됨
-            noteUiState = noteUiState.copy(
-                note = Note(
-                    id = -1,
-                    title = "",
-                    content = newContent,
-                    folderId = noteUiState.folder?.id ?: 0,
-                    createdDate = now(),
-                    updatedDate = now()
-                )
-            )
-        }
-    }
-
-        // 노트 업데이트
-
     private fun noteChanged(
         note: Note,
         newNote: Note,
@@ -318,7 +267,6 @@ class NoteDetailsViewModel(
                 note.folderId != newNote.folderId ||
                 note.pinned != newNote.pinned
     }
-
     data class UiState(
         val note: Note? = null,
         val navigateUp: Boolean = false,
