@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.mhss.app.domain.model.SpeechRecognitionState
 import com.mhss.app.domain.repository.SpeechToTextRepository
@@ -89,11 +90,18 @@ class SpeechToTextRepositoryImpl(
 
                     override fun onResults(results: Bundle?) {
                         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+
+                        // 로그 추가로 실제 값 확인
+                        Log.d("SpeechRecognition", "인식된 결과: $matches")
+
                         if (!matches.isNullOrEmpty()) {
-                            trySend(SpeechRecognitionState.Success(matches[0]))
-                        } else {
-                            trySend(SpeechRecognitionState.Error("결과를 찾을 수 없습니다."))
+                            // 인식된 텍스트가 있으면 성공 상태 전송
+                            val recognizedText = matches[0]
+                            Log.d("SpeechRecognition", "인식 성공: $recognizedText")
+                            trySend(SpeechRecognitionState.Success(recognizedText))
                         }
+                        // 결과가 없는 경우 에러 메시지를 보내지 않고 종료
+                        // else 블록 자체를 제거
                     }
 
                     override fun onPartialResults(partialResults: Bundle?) {

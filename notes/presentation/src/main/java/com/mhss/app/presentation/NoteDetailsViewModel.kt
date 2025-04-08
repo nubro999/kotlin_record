@@ -71,6 +71,7 @@ class NoteDetailsViewModel(
     var aiState by mutableStateOf((AiState()))
         private set
     private var aiActionJob: Job? = null
+    private var speechEventJob: Job? = null
 
     var sttState by mutableStateOf(STTState())
         private set
@@ -197,18 +198,19 @@ class NoteDetailsViewModel(
                 aiState = aiState.copy(showAiSheet = false)
             }
 
-            is NoteDetailsEvent.Speech -> viewModelScope.launch {
-                // 음성 인식 시작 전 상태 초기화
+
+            is NoteDetailsEvent.Speech -> speechEventJob = viewModelScope.launch {
                 sttState = sttState.copy(
                     isListening = true,
                     recognizedText = "",
                     error = null,
                     showSttDialog = true
                 )
-                // 현재 노트 내용 저장 (나중에 참조용)
+
+                // 기존 내용과 Speech 이벤트의 content 파라미터 사용
                 val initialContent = event.content
 
-                // 음성 인식 시작 (도메인 레이어의 SpeechRecognitionState 사용)
+                // 음성 인식 시작
                 startSpeechRecognitionUseCase().collect { recognitionState ->
                     when (recognitionState) {
                         is SpeechRecognitionState.Listening -> {
@@ -248,11 +250,15 @@ class NoteDetailsViewModel(
                     }
                 }
             }
-            NoteDetailsEvent.DismissSttDialog -> {
+
+            is NoteDetailsEvent.DismissSttDialog -> {
                 sttState = sttState.copy(showSttDialog = false)
             }
-            NoteDetailsEvent.StopSpeech -> {
+
+            is NoteDetailsEvent.StopSpeech -> {
                 stopSpeechRecognitionUseCase()
+                speechEventJob?.cancel()
+                sttState = sttState.copy(isListening = false, showSttDialog = false) // showSttDialog를 false로 설정
             }
         }
     }
@@ -275,7 +281,32 @@ class NoteDetailsViewModel(
             recognizedText
         }
 
+        // 노트 업데이트 코드 추가
+        val currentNote = noteUiState.note
+        if (currentNote != null) {
+            viewModelScope.launch {
+                val updatedNote = currentNote.copy(
+                    content = newContent,
+                    updatedDate = now()
+                )
+                updateNote(updatedNote)
+                noteUiState = noteUiState.copy(note = updatedNote)
+            }
+        } else {
+            // 새 노트인 경우 UI 상태만 업데이트하고 나중에 ScreenOnStop에서 저장됨
+            noteUiState = noteUiState.copy(
+                note = Note(
+                    id = -1,
+                    title = "",
+                    content = newContent,
+                    folderId = noteUiState.folder?.id ?: 0,
+                    createdDate = now(),
+                    updatedDate = now()
+                )
+            )
+        }
     }
+
         // 노트 업데이트
 
     private fun noteChanged(
