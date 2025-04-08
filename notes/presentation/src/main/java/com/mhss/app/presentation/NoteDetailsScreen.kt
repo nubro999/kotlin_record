@@ -345,6 +345,7 @@ fun NoteDetailsScreen(
                 initialOffsetY = { it }, animationSpec = spring(
                     dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessVeryLow
+
                 )
             ),
             exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(700))
@@ -365,7 +366,9 @@ fun NoteDetailsScreen(
                     isListening = sttState.isListening,
                     recognizedText = sttState.recognizedText,
                     error = sttState.error,
-                    onStopClick = { viewModel.onEvent(NoteDetailsEvent.StopSpeech) }
+                    onStopClick = {
+                        content = sttState.recognizedText + "\n" + content
+                        viewModel.onEvent(NoteDetailsEvent.StopSpeech) },
                 )
             }
         }
