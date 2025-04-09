@@ -68,13 +68,16 @@ class NoteDetailsViewModel(
     private lateinit var openaiURL: String
     private val _aiEnabled = MutableStateFlow(false)
     val aiEnabled: StateFlow<Boolean> = _aiEnabled
+
     var aiState by mutableStateOf((AiState()))
         private set
+    var sttState by mutableStateOf(STTState())
+        private set
+
     private var aiActionJob: Job? = null
     private var speechEventJob: Job? = null
 
-    var sttState by mutableStateOf(STTState())
-        private set
+
     private val aiProvider = //여기서 ai관련 설정정보를 수집
         getPreference(intPreferencesKey(PrefsConstants.AI_PROVIDER_KEY), AiProvider.None.id)
             .map { id -> AiProvider.entries.first { it.id == id } }

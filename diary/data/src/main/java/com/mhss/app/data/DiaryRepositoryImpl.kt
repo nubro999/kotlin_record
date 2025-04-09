@@ -17,7 +17,6 @@ class DiaryRepositoryImpl(
     private val diaryDao: DiaryDao,
     @Named("ioDispatcher") private val ioDispatcher: CoroutineDispatcher
 ) : DiaryRepository {
-
     override fun getAllEntries(): Flow<List<DiaryEntry>> {
         return diaryDao.getAllEntries()
             .flowOn(ioDispatcher)

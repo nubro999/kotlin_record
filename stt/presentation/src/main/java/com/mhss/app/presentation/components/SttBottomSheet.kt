@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -212,7 +211,6 @@ fun SttBottomSheet(
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
-
                 // 인식된 텍스트 표시 (필요한 경우)
                 if (recognizedText.isNotEmpty()) {
                     Text(
