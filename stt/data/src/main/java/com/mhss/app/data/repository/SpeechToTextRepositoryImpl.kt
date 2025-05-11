@@ -54,24 +54,19 @@ class SpeechToTextRepositoryImpl(
                     override fun onReadyForSpeech(params: Bundle?) {
                         trySend(SpeechRecognitionState.Listening)
                     }
-
                     override fun onBeginningOfSpeech() {
                         // 이미 Listening 상태를 보냈으므로 여기서는 아무것도 하지 않음
                     }
-
                     override fun onRmsChanged(rmsdB: Float) {
                         // 소리 크기 변화 - 필요시 UI에 반영할 수 있음
                     }
-
                     override fun onBufferReceived(buffer: ByteArray?) {
-                        // 버퍼 수신 (일반적으로 사용되지 않음)
+                        // 버퍼 수신
                     }
-
                     override fun onEndOfSpeech() {
                         // 사용자가 말을 멈추면 호출됨
                         trySend(SpeechRecognitionState.Processing("처리 중..."))
                     }
-
                     override fun onError(error: Int) {
                         val errorMessage = when (error) {
                             SpeechRecognizer.ERROR_AUDIO -> "오디오 녹음 오류"
