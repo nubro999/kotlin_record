@@ -54,4 +54,16 @@ val String.correctSpellingNotePrompt: String
         Corrected note:
     """.trimIndent() //노트관련 ai 프롬프팅 툴
 
+val String.questionAboutDay: String
+    get() = """
+        Below is a diary entry written by a user.
+        Based on this diary, generate meaningful, open-ended questions that encourage the user to reflect more deeply on their experience or emotions.
+        The questions should be specific and focused on the user's feelings or actions.
+        Respond using the same language as the original note language.
+        Note content:
+        $this
+        question:
+        """.trimIndent()
+
+
 // TODO:  val Diary.ExtractKeyword: String
