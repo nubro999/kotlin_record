@@ -57,9 +57,9 @@ val String.correctSpellingNotePrompt: String
 val String.questionAboutDay: String
     get() = """
         Below is a diary entry written by a user.
-        Based on this diary, generate meaningful, open-ended questions that encourage the user to reflect more deeply on their experience or emotions.
-        The questions should be specific and focused on the user's feelings or actions.
+        Based on this diary, generate meaningful, open-ended 2 questions that encourage the user to reflect more deeply on their experience or emotions.
         Respond using the same language as the original note language.
+        Respond format: #1 question/n #2 question
         Note content:
         $this
         question:

@@ -27,7 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.mhss.app.domain.model.DiaryEntry
 import com.mhss.app.domain.model.Mood
-import com.mhss.app.presentation.components.AiResultSheet
+import com.mhss.app.presentation.components.AiQuestionSheet
 import com.mhss.app.ui.R
 import com.mhss.app.ui.components.common.DateTimeDialog
 import com.mhss.app.ui.components.common.MyBrainAppBar
@@ -150,13 +150,29 @@ fun DiaryEntryDetailsScreen(
                 onMoodChange = { mood = it }
             )
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text(text = stringResource(R.string.title)) },
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text(text = stringResource(R.string.title)) },
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                )
+                GradientIconButton(
+                    text = stringResource(id = R.string.question),
+                    iconPainter = painterResource(id = R.drawable.ic_question),
+                ) { viewModel.onEvent(DiaryDetailsEvent.Question(content)) }
+            }
+            Spacer(Modifier.height(8.dp))
+// 그 다음에 Content 입력 박스 등 나머지 UI
+
             Spacer(Modifier.height(8.dp))
             // Content 입력 박스와 AI 버튼 Row 배치
             Box(
@@ -173,7 +189,8 @@ fun DiaryEntryDetailsScreen(
                             .padding(8.dp),
                         imageTransformer = Coil2ImageTransformerImpl,
                         colors = markdownColor(
-                            linkText = Color.Blue
+                            linkText = Color.Blue,
+
                         ),
                         typography = markdownTypography(
                             text = MaterialTheme.typography.bodyMedium,
@@ -194,13 +211,7 @@ fun DiaryEntryDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 120.dp)
-                            .padding(end = 36.dp) // 오른쪽에 AI 버튼 공간 확보
                     )
-                    // 오른쪽 상단에 AI 버튼
-                    GradientIconButton(
-                        text = stringResource(id = R.string.question),
-                        iconPainter = painterResource(id = R.drawable.ic_question),
-                    ) { viewModel.onEvent(DiaryDetailsEvent.Question(content)) }
                 }
             }
         }
@@ -256,7 +267,7 @@ fun DiaryEntryDetailsScreen(
                 onDismissRequest = { showAiSheet = false },
                 sheetState = rememberModalBottomSheetState()
             ) {
-                AiResultSheet(
+                AiQuestionSheet(
                     loading = aiState.loading,
                     result = aiState.result,
                     error = aiState.error?.toUserMessage(),
@@ -268,13 +279,8 @@ fun DiaryEntryDetailsScreen(
                         viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
                         showAiSheet = false
                     },
-                    onReplaceClick = {
-                        content = aiState.result.toString()
-                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
-                        showAiSheet = false
-                    },
-                    onAddToNoteClick = {
-                        content = aiState.result + "\n" + content
+                    onAddToDiaryClick = {
+                        content = content + "\n\n" + aiState.result
                         viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
                         showAiSheet = false
                     }
