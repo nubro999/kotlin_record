@@ -1,7 +1,11 @@
 package com.mhss.app.presentation
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +23,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.mhss.app.domain.model.DiaryEntry
 import com.mhss.app.domain.model.Mood
+import com.mhss.app.presentation.components.AiResultSheet
 import com.mhss.app.ui.R
 import com.mhss.app.ui.components.common.DateTimeDialog
 import com.mhss.app.ui.components.common.MyBrainAppBar
+import com.mhss.app.ui.toUserMessage
 import com.mhss.app.util.date.fullDate
 import com.mhss.app.util.date.now
 import com.mikepenz.markdown.coil2.Coil2ImageTransformerImpl
@@ -34,6 +41,8 @@ import com.mikepenz.markdown.m3.markdownTypography
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiaryEntryDetailsScreen(
     navController: NavHostController,
@@ -53,6 +62,10 @@ fun DiaryEntryDetailsScreen(
         mutableStateOf(false)
     }
     val context = LocalContext.current
+
+    val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
+    val aiState = viewModel.aiState
+    var showAiSheet = aiState.showAiSheet
 
     LaunchedEffect(state.entry) {
         if (state.entry != null) {
@@ -133,7 +146,8 @@ fun DiaryEntryDetailsScreen(
             Spacer(Modifier.height(8.dp))
             EntryMoodSection(
                 currentMood = mood,
-            ) { mood = it }
+                onMoodChange = { mood = it }
+            )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = title,
@@ -143,38 +157,59 @@ fun DiaryEntryDetailsScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            if (readingMode) {
-                Markdown(
-                    content = content,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                        .padding(8.dp),
-                    imageTransformer = Coil2ImageTransformerImpl,
-                    colors = markdownColor(
-                        linkText = Color.Blue
-                    ),
-                    typography = markdownTypography(
-                        text = MaterialTheme.typography.bodyMedium,
-                        h1 = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                        h2 = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        h3 = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                        h4 = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        h5 = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        h6 = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+            // Content 입력 박스와 AI 버튼 Row 배치
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            ) {
+                if (readingMode) {
+                    Markdown(
+                        content = content,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .padding(8.dp),
+                        imageTransformer = Coil2ImageTransformerImpl,
+                        colors = markdownColor(
+                            linkText = Color.Blue
+                        ),
+                        typography = markdownTypography(
+                            text = MaterialTheme.typography.bodyMedium,
+                            h1 = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                            h2 = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                            h3 = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            h4 = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            h5 = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            h6 = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                        )
                     )
-                )
-            } else {
-                OutlinedTextField(
-                    value = content,
-                    onValueChange = { content = it },
-                    label = { Text(text = stringResource(R.string.content)) },
-                    shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(bottom = 8.dp)
-                )
+                } else {
+                    OutlinedTextField(
+                        value = content,
+                        onValueChange = { content = it },
+                        label = { Text(text = stringResource(R.string.content)) },
+                        shape = RoundedCornerShape(15.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 120.dp)
+                            .padding(end = 36.dp) // 오른쪽에 AI 버튼 공간 확보
+                    )
+                    // 오른쪽 상단에 AI 버튼
+                    IconButton(
+                        onClick = { showAiSheet = true },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .size(32.dp)
+                            .padding(top = 6.dp, end = 4.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_question), // AI용 아이콘 리소스
+                            contentDescription = "question",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
         }
         if (showDateDialog) DateTimeDialog(
@@ -223,6 +258,37 @@ fun DiaryEntryDetailsScreen(
                     }
                 }
             )
+        // AI 결과 팝업 (ModalBottomSheet)
+        if (showAiSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showAiSheet = false },
+                sheetState = rememberModalBottomSheetState()
+            ) {
+                AiResultSheet(
+                    loading = aiState.loading,
+                    result = aiState.result,
+                    error = aiState.error?.toUserMessage(),
+                    onCopyClick = {
+                        val clipboard =
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("ai result", aiState.result.toString())
+                        clipboard.setPrimaryClip(clip)
+                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        showAiSheet = false
+                    },
+                    onReplaceClick = {
+                        content = aiState.result.toString()
+                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        showAiSheet = false
+                    },
+                    onAddToNoteClick = {
+                        content = aiState.result + "\n" + content
+                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        showAiSheet = false
+                    }
+                )
+            }
+        }
     }
 }
 
