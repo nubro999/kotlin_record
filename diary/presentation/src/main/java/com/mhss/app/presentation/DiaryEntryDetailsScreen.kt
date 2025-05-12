@@ -40,6 +40,7 @@ import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import com.mhss.app.presentation.components.GradientIconButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,19 +197,10 @@ fun DiaryEntryDetailsScreen(
                             .padding(end = 36.dp) // 오른쪽에 AI 버튼 공간 확보
                     )
                     // 오른쪽 상단에 AI 버튼
-                    IconButton(
-                        onClick = { showAiSheet = true },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .size(32.dp)
-                            .padding(top = 6.dp, end = 4.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_question), // AI용 아이콘 리소스
-                            contentDescription = "question",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    GradientIconButton(
+                        text = stringResource(id = R.string.question),
+                        iconPainter = painterResource(id = R.drawable.ic_question),
+                    ) { viewModel.onEvent(DiaryDetailsEvent.Question(content)) }
                 }
             }
         }
