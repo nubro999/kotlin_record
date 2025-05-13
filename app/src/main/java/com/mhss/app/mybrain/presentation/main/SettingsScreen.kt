@@ -36,6 +36,8 @@ import com.mhss.app.ui.components.common.MyBrainAppBar
 import com.mhss.app.ui.getName
 import com.mhss.app.ui.navigation.Screen
 import com.mhss.app.ui.theme.Rubik
+import com.mhss.app.ui.theme.Nanum
+import com.mhss.app.ui.theme.Batang
 import com.mhss.app.ui.toFontFamily
 import com.mhss.app.ui.toInt
 import kotlinx.coroutines.launch
@@ -352,14 +354,44 @@ fun AppFontSettingsItem(
     val fonts = listOf(
         FontFamily.Default,
         Rubik,
+        Nanum,
+        Batang,
         FontFamily.Monospace,
         FontFamily.SansSerif
     )
+    // 2. 변환 함수
+    fun FontFamily.toInt(): Int = when (this) {
+        FontFamily.Default -> 0
+        Rubik -> 1
+        Nanum -> 2
+        Batang -> 3
+        FontFamily.Monospace -> 4
+        FontFamily.SansSerif -> 5
+        else -> 0
+    }
+
+    fun Int.toFontFamily(): FontFamily = when (this) {
+        0 -> FontFamily.Default
+        1 -> Rubik
+        2 -> Nanum
+        3 -> Batang
+        4 -> FontFamily.Monospace
+        5 -> FontFamily.SansSerif
+        else -> FontFamily.Default
+    }
+
+    fun FontFamily.getName(): String = when (this) {
+        FontFamily.Default -> "기본"
+        Rubik -> "Rubik"
+        Nanum -> "나눔고딕"
+        Batang -> "바탕"
+        FontFamily.Monospace -> "Monospace"
+        FontFamily.SansSerif -> "SansSerif"
+        else -> "기본"
+    }
     SettingsItemCard(
         cornerRadius = 16.dp,
-        onClick = {
-            expanded = true
-        },
+        onClick = { expanded = true },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -374,13 +406,10 @@ fun AppFontSettingsItem(
             )
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     selectedFont.toFontFamily().getName(),
                     style = MaterialTheme.typography.bodyLarge

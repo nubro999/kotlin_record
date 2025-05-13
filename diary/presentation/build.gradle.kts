@@ -47,6 +47,9 @@ dependencies {
     implementation(project(":ai:presentation"))
     implementation(project(":ai:domain"))
 
+    implementation(project(":stt:domain"))
+    implementation(project(":stt:presentation"))
+
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
 

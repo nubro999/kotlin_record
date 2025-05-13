@@ -12,6 +12,17 @@ val Rubik = FontFamily(
     Font(R.font.rubik_regular),
     Font(R.font.rubik_bold, FontWeight.Bold)
 )
+
+val Nanum = FontFamily(
+    Font(R.font.nanum_gothic_regular),
+    Font(R.font.nanum_gothic_bold, FontWeight.Bold)
+)
+
+val Batang = FontFamily(
+    Font(R.font.batang_regular),
+    Font(R.font.batang_bold, FontWeight.Bold)
+)
+
 // Set of Material typography styles to start with
 fun getTypography(font: FontFamily) = Typography(
     bodyLarge = TextStyle(
