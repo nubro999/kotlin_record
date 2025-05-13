@@ -3,6 +3,12 @@ package com.mhss.app.presentation
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -64,7 +70,7 @@ fun DiaryEntryDetailsScreen(
     }
     val context = LocalContext.current
 
-    val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
+    //val aiEnabled by viewModel.aiEnabled.collectAsStateWithLifecycle()
     val aiState = viewModel.aiState
     var showAiSheet = aiState.showAiSheet
 
@@ -261,34 +267,50 @@ fun DiaryEntryDetailsScreen(
                     }
                 }
             )
-        // AI 결과 팝업 (ModalBottomSheet)
-        if (showAiSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showAiSheet = false },
-                sheetState = rememberModalBottomSheetState()
+            AnimatedVisibility(
+                visible = showAiSheet,
+                enter = slideInVertically(
+                    initialOffsetY = { it }, animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessVeryLow
+                    )
+                ),
+                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(700))
             ) {
-                AiQuestionSheet(
-                    loading = aiState.loading,
-                    result = aiState.result,
-                    error = aiState.error?.toUserMessage(),
-                    onCopyClick = {
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("ai result", aiState.result.toString())
-                        clipboard.setPrimaryClip(clip)
-                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
-                        showAiSheet = false
-                    },
-                    onAddToDiaryClick = {
-                        content = content + "\n\n" + aiState.result
-                        viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
-                        showAiSheet = false
-                    }
-                )
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            // 바깥 클릭 시 Sheet 닫기 + 추가 로직 가능
+                            viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        },
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    AiQuestionSheet(
+                        loading = aiState.loading,
+                        result = aiState.result,
+                        error = aiState.error?.toUserMessage(),
+                        onCopyClick = {
+                            val clipboard =
+                                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText("ai result", aiState.result.toString())
+                            clipboard.setPrimaryClip(clip)
+                            viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        },
+                        onAddToDiaryClick = {
+                            content = content + "\n\n" + aiState.result
+                            viewModel.onEvent(DiaryDetailsEvent.AiResultHandled)
+                        }
+                    )
+                }
             }
         }
     }
-}
+
 
 @Composable
 fun EntryMoodSection(

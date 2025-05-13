@@ -212,65 +212,6 @@ fun SettingsScreen(
                     }
                 )
             }
-
-            item {
-                Text(
-                    text = stringResource(R.string.about),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp, horizontal = 12.dp)
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.app_version,
-                    icon = R.drawable.ic_code,
-                    subtitle = context.getPackageInfo().versionName ?: BuildConfig.VERSION_NAME,
-                    link = Constants.GITHUB_RELEASES_LINK
-                )
-            }
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.project_on_github,
-                    icon = R.drawable.ic_github,
-                    link = Constants.PROJECT_GITHUB_LINK
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.privacy_policy,
-                    icon = R.drawable.ic_privacy,
-                    link = Constants.PRIVACY_POLICY_LINK
-                )
-            }
-
-            item {
-                Text(
-                    text = stringResource(R.string.product),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp, horizontal = 12.dp)
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.request_feature_report_bug,
-                    icon = R.drawable.ic_feature_issue,
-                    link = Constants.GITHUB_ISSUES_LINK
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.project_roadmap,
-                    icon = R.drawable.ic_roadmap,
-                    link = Constants.PROJECT_ROADMAP_LINK
-                )
-            }
-            item { Spacer(Modifier.height(60.dp)) }
         }
     }
 }
