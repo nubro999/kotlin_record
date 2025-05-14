@@ -61,7 +61,7 @@ fun DateTimeDialog(
                     } else showTime = true
                 },
             ) {
-                Text(stringResource(R.string.okay))
+                Text(stringResource(R.string.confirm))
             }
         }
     ) {

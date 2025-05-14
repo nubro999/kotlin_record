@@ -201,4 +201,6 @@
     <string name="question">question</string>
     <string name="add_to_Diary">Add to diary</string>
     <string name="app_name">RecorDii</string>
+    <string name="confirm">confirm</string>
+
 </resources>

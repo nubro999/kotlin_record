@@ -201,4 +201,5 @@
     <string name="close">close</string>
     <string name="question">question</string>
     <string name="add_to_Diary">Add to diary</string>
+    <string name="confirm">confirm</string>
 </resources>
