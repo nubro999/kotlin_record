@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Brain</string>
+    <string name="app_name">RecorDii</string>
     <string name="reminders_channel_description">Canal de notificação para enviar lembretes de tarefas</string>
     <string name="reminders_channel_name">Lembretes</string>
     <string name="complete">Concluído</string>
@@ -199,4 +199,7 @@
     <string name="listening">listening</string>
     <string name="stop">stop</string>
     <string name="close">close</string>
+    <string name="question">question</string>
+    <string name="add_to_Diary">Add to diary</string>
+    <string name="confirm">confirm</string>
 </resources>

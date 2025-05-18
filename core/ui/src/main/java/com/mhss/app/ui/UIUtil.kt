@@ -14,6 +14,8 @@ import com.mhss.app.ui.theme.Green
 import com.mhss.app.ui.theme.Orange
 import com.mhss.app.ui.theme.Red
 import com.mhss.app.ui.theme.Rubik
+import com.mhss.app.ui.theme.Nanum
+import com.mhss.app.ui.theme.Batang
 
 
 enum class ThemeSettings(val value: Int) {
@@ -40,8 +42,10 @@ fun Int.toFontFamily(): FontFamily {
     return when (this) {
         0 -> FontFamily.Default
         1 -> Rubik
-        2 -> FontFamily.Monospace
-        3 -> FontFamily.SansSerif
+        2 -> Nanum
+        3 -> Batang
+        4 -> FontFamily.Monospace
+        5 -> FontFamily.SansSerif
         else -> FontFamily.Default
     }
 }
@@ -50,8 +54,10 @@ fun FontFamily.toInt(): Int {
     return when (this) {
         FontFamily.Default -> 0
         Rubik -> 1
-        FontFamily.Monospace -> 2
-        FontFamily.SansSerif -> 3
+        Nanum -> 2
+        Batang -> 3
+        FontFamily.Monospace -> 4
+        FontFamily.SansSerif -> 5
         else -> 0
     }
 }
@@ -61,6 +67,8 @@ fun FontFamily.getName(): String {
     return when (this) {
         FontFamily.Default -> stringResource(R.string.font_system_default)
         Rubik -> "Rubik"
+        Nanum -> "나눔"
+        Batang -> "바탕"
         FontFamily.Monospace -> "Monospace"
         FontFamily.SansSerif -> "Sans Serif"
         else -> stringResource(R.string.font_system_default)

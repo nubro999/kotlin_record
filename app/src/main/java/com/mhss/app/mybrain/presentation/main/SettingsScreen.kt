@@ -36,6 +36,8 @@ import com.mhss.app.ui.components.common.MyBrainAppBar
 import com.mhss.app.ui.getName
 import com.mhss.app.ui.navigation.Screen
 import com.mhss.app.ui.theme.Rubik
+import com.mhss.app.ui.theme.Nanum
+import com.mhss.app.ui.theme.Batang
 import com.mhss.app.ui.toFontFamily
 import com.mhss.app.ui.toInt
 import kotlinx.coroutines.launch
@@ -212,65 +214,6 @@ fun SettingsScreen(
                     }
                 )
             }
-
-            item {
-                Text(
-                    text = stringResource(R.string.about),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp, horizontal = 12.dp)
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.app_version,
-                    icon = R.drawable.ic_code,
-                    subtitle = context.getPackageInfo().versionName ?: BuildConfig.VERSION_NAME,
-                    link = Constants.GITHUB_RELEASES_LINK
-                )
-            }
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.project_on_github,
-                    icon = R.drawable.ic_github,
-                    link = Constants.PROJECT_GITHUB_LINK
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.privacy_policy,
-                    icon = R.drawable.ic_privacy,
-                    link = Constants.PRIVACY_POLICY_LINK
-                )
-            }
-
-            item {
-                Text(
-                    text = stringResource(R.string.product),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp, horizontal = 12.dp)
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.request_feature_report_bug,
-                    icon = R.drawable.ic_feature_issue,
-                    link = Constants.GITHUB_ISSUES_LINK
-                )
-            }
-
-            item {
-                SettingsBasicLinkItem(
-                    title = R.string.project_roadmap,
-                    icon = R.drawable.ic_roadmap,
-                    link = Constants.PROJECT_ROADMAP_LINK
-                )
-            }
-            item { Spacer(Modifier.height(60.dp)) }
         }
     }
 }
@@ -411,14 +354,44 @@ fun AppFontSettingsItem(
     val fonts = listOf(
         FontFamily.Default,
         Rubik,
+        Nanum,
+        Batang,
         FontFamily.Monospace,
         FontFamily.SansSerif
     )
+    // 2. 변환 함수
+    fun FontFamily.toInt(): Int = when (this) {
+        FontFamily.Default -> 0
+        Rubik -> 1
+        Nanum -> 2
+        Batang -> 3
+        FontFamily.Monospace -> 4
+        FontFamily.SansSerif -> 5
+        else -> 0
+    }
+
+    fun Int.toFontFamily(): FontFamily = when (this) {
+        0 -> FontFamily.Default
+        1 -> Rubik
+        2 -> Nanum
+        3 -> Batang
+        4 -> FontFamily.Monospace
+        5 -> FontFamily.SansSerif
+        else -> FontFamily.Default
+    }
+
+    fun FontFamily.getName(): String = when (this) {
+        FontFamily.Default -> "기본"
+        Rubik -> "Rubik"
+        Nanum -> "나눔고딕"
+        Batang -> "바탕"
+        FontFamily.Monospace -> "Monospace"
+        FontFamily.SansSerif -> "SansSerif"
+        else -> "기본"
+    }
     SettingsItemCard(
         cornerRadius = 16.dp,
-        onClick = {
-            expanded = true
-        },
+        onClick = { expanded = true },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -433,13 +406,10 @@ fun AppFontSettingsItem(
             )
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     selectedFont.toFontFamily().getName(),
                     style = MaterialTheme.typography.bodyLarge

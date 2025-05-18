@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Brain</string>
+    <string name="app_name">RecorDii</string>
     <string name="reminders_channel_description">Görev hatırlatma bildirimleri için bildirim kanalı</string>
     <string name="reminders_channel_name">Hatırlatıcılar</string>
     <string name="complete">Tamamla</string>
@@ -199,4 +199,7 @@
     <string name="listening">listening</string>
     <string name="stop">stop</string>
     <string name="close">close</string>
+    <string name="question">question</string>
+    <string name="add_to_Diary">Add to diary</string>
+    <string name="confirm">confirm</string>
 </resources>

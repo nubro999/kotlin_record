@@ -4,7 +4,7 @@ object AiConstants {
     const val OPENAI_BASE_URL = "https://api.openai.com/v1"
     const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
-    const val OPENAI_DEFAULT_MODEL = "gpt-4o"
+    const val OPENAI_DEFAULT_MODEL = "gpt-4.1"
     const val GEMINI_DEFAULT_MODEL = "gemini-1.5-pro"
 
     const val GEMINI_KEY_INFO_URL = "https://ai.google.dev/gemini-api/docs/api-key"
@@ -57,9 +57,9 @@ val String.correctSpellingNotePrompt: String
 val String.questionAboutDay: String
     get() = """
         Below is a diary entry written by a user.
-        Based on this diary, generate meaningful, open-ended questions that encourage the user to reflect more deeply on their experience or emotions.
-        The questions should be specific and focused on the user's feelings or actions.
+        Based on this diary, generate meaningful, open-ended 2 questions that encourage the user to reflect more deeply on their experience or emotions.
         Respond using the same language as the original note language.
+        Respond format: #1 question (enter) #2 question
         Note content:
         $this
         question:
